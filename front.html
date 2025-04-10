@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Administração de Usuários</title>
+  <style>
+    :root {
+      --primary-color: #ce0058;
+      --background-color: #ffffff;
+      --text-color: #333;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary-color);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    button {
+      padding: 6px 12px;
+      margin: 2px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      background-color: var(--primary-color);
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #a80045;
+    }
+
+    form {
+      margin-top: 30px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    form h2 {
+      margin-top: 0;
+      color: var(--primary-color);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input {
+      padding: 8px;
+      width: 100%;
+      max-width: 400px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    @media (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+      }
+
+      th, td {
+        padding: 10px;
+        border: none;
+        border-bottom: 1px solid #ddd;
+      }
+
+      tr {
+        margin-bottom: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      td:last-child {
+        text-align: right;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Gerenciador de Usuários</h1>
+
+  <table id="userTable">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Pontuação</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Dados vão aqui -->
+    </tbody>
+  </table>
+
+  <form id="userForm">
+    <h2>Cadastrar / Editar Usuário</h2>
+    <input type="hidden" id="editIndex" value="">
+    <label>Nome: <input type="text" id="name" required></label>
+    <label>Email: <input type="email" id="email" required></label>
+    <label>Pontuação: <input type="number" id="score" required></label>
+    <button type="submit">Salvar</button>
+  </form>
+
+  <script>
+    let users = [];
+
+    // Carregar usuários (simulação inicial)
+    async function loadUsers() {
+    try {
+        const res = await fetch('https://api-game-users.vercel.app/users');
+        users = await res.json();
+        renderTable();
+    } catch (error) {
+        console.error('Erro ao carregar usuários:', error);
+    }
+} 
+
+    function renderTable() {
+      const tbody = document.querySelector("#userTable tbody");
+      tbody.innerHTML = "";
+      users.forEach((user, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.score}</td>
+          <td>
+            <button onclick="editUser(${index})">Editar</button>
+            <button onclick="deleteUser(${index})">Deletar</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function editUser(index) {
+      const user = users[index];
+      document.getElementById("name").value = user.name;
+      document.getElementById("email").value = user.email;
+      document.getElementById("score").value = user.score;
+      document.getElementById("editIndex").value = index;
+    }
+
+    function deleteUser(index) {
+      // TODO: Chamar API para deletar usuário
+      users.splice(index, 1);
+      renderTable();
+    }
+
+    document.getElementById("userForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const score = parseInt(document.getElementById("score").value);
+      const index = document.getElementById("editIndex").value;
+
+      if (index === "") {
+        // Novo usuário
+        // TODO: Chamar API para criar novo usuário
+        users.push({ name, email, score });
+      } else {
+        // Atualizar usuário existente
+        // TODO: Chamar API para atualizar usuário
+        users[index] = { name, email, score };
+        document.getElementById("editIndex").value = "";
+      }
+
+      // Limpar formulário e atualizar tabela
+      document.getElementById("userForm").reset();
+      renderTable();
+    });
+
+    // Inicializa a página
+    loadUsers();
+  </script>
+
+</body>
+</html>
