@@ -136,6 +136,7 @@
           <th>Nome</th>
           <th>Email</th>
           <th>Pontuação</th>
+          <th>Telefone</th>
           <th>Ações</th>
         </tr>
       </thead>
@@ -149,7 +150,8 @@
       <input type="hidden" id="editIndex" value="">
       <label>Nome: <input type="text" id="name" required></label>
       <label>Email: <input type="email" id="email" required></label>
-      <label>Pontuação: <input type="number" id="score" required></label>
+      <label>Telefone: <input type="text" id="phone" required></label>
+      <label>Pontuação: <input type="number" id="score"></label>
       <button type="submit">Salvar</button>
     </form>
   </div>
@@ -177,6 +179,7 @@
           <td>${user.name}</td>
           <td>${user.email}</td>
           <td>${user.score}</td>
+          <td>${user.phone}</td>
           <td>
             <button onclick="editUser(${index})">Editar</button>
             <button onclick="deleteUser(${index})">Deletar</button>
@@ -191,6 +194,7 @@
       document.getElementById("name").value = user.name;
       document.getElementById("email").value = user.email;
       document.getElementById("score").value = user.score;
+      document.getElementById("phone").value = user.phone;
       document.getElementById("editIndex").value = index;
     }
 
@@ -211,6 +215,7 @@
       e.preventDefault();
       const name = document.getElementById("name").value;
       const email = document.getElementById("email").value;
+      const phone = document.getElementById("phone").value;
       const score = parseInt(document.getElementById("score").value);
       const index = document.getElementById("editIndex").value;
 
@@ -219,7 +224,7 @@
           const res = await fetch(`${API_URL}/users`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, score })
+            body: JSON.stringify({ name, email, phone })
           });
           const newUser = await res.json();
           users.push(newUser);
@@ -232,7 +237,7 @@
           const res = await fetch(`${API_URL}/users/${user._id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, score })
+            body: JSON.stringify({ name, email, phone, score })
           });
           const updatedUser = await res.json();
           users[index] = updatedUser;
