@@ -129,6 +129,15 @@
 <body>
   <div class="container">
     <h1>Gerenciador de Usuários</h1>
+    <form id="userForm">
+      <h2>Cadastrar / Editar Usuário</h2>
+      <input type="hidden" id="editIndex" value="">
+      <label>Nome: <input type="text" id="name" required></label>
+      <label>Email: <input type="email" id="email" required></label>
+      <label>Telefone: <input type="text" id="phone" required></label>
+      <label>Pontuação: <input type="number" id="score"></label>
+      <button type="submit">Salvar</button>
+    </form>
 
     <table id="userTable">
       <thead>
@@ -145,15 +154,6 @@
       </tbody>
     </table>
 
-    <form id="userForm">
-      <h2>Cadastrar / Editar Usuário</h2>
-      <input type="hidden" id="editIndex" value="">
-      <label>Nome: <input type="text" id="name" required></label>
-      <label>Email: <input type="email" id="email" required></label>
-      <label>Telefone: <input type="text" id="phone" required></label>
-      <label>Pontuação: <input type="number" id="score"></label>
-      <button type="submit">Salvar</button>
-    </form>
   </div>
 
   <script>
