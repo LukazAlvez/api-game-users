@@ -5,10 +5,11 @@ import cors from 'cors';
 import User from './models/user.js';
 
 dotenv.config();
-app.use(cors());
+
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 await mongoose.connect(process.env.MONGO_URI)
 
 const PORT = process.env.PORT || 3000;
