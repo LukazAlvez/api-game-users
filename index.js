@@ -6,16 +6,21 @@ import User from './models/user.js';
 dotenv.config();
 
 const app = express();
+app.use(express.json());
+
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
 
 app.get('/users', async (req, res) => {
     try{
             const users = await User.find();
-            res.json(users);
+            return res.json(users);
         } catch (err) {
-            res.status(500).json({ message: err.message });
+            return res.status(500).json({ message: err.message });
         }
 });
 
