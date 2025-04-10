@@ -24,24 +24,42 @@ app.get('/users', async (req, res) => {
     res.json(users);
 });
 
-app.post('/user', async (req, res) => {
-    const user = new User(req.body);
-    await user.save();
-    res.json(user);
-});
-app.put('/user:id', async (req, res) => {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(user);
-});
+//cria um novo usuário
+app.post('/users', async (req, res) => {
+    try {
+      const { name, email, score } = req.body;
+      const newUser = await User.create({ name, email, score });
+      res.status(201).json(newUser);
+    } catch (error) {
+      res.status(500).json({ error: 'Erro ao criar usuário' });
+    }
+  });
 
+  //atualiza um usuário
+  app.put('/users/:id', async (req, res) => {
+    try {
+      const { name, email, score } = req.body;
+      const updatedUser = await User.findByIdAndUpdate(
+        req.params.id,
+        { name, email, score },
+        { new: true } // Retorna o documento atualizado
+      );
+      res.json(updatedUser);
+    } catch (error) {
+      res.status(500).json({ error: 'Erro ao atualizar usuário' });
+    }
+  });
 
-app.delete('/user:id', async (req, res) => {
-    await User.findByIdAndDelete(req.params.id);
-    res.json({ message: 'User deleted' });
-});
-
-
-
+//deleta um usuário
+app.delete('/users/:id', async (req, res) => {
+    try {
+      await User.findByIdAndDelete(req.params.id);
+      res.json({ message: 'User deleted' });
+    } catch (error) {
+      res.status(500).json({ error: 'Erro ao deletar usuário' });
+    }
+  });
+  
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

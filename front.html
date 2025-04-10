@@ -112,7 +112,7 @@
     async function deleteUser(index) {
       const user = users[index];
       try {
-        await fetch(`${API_URL}/delete-user/${user._id}`, {
+        await fetch(`${API_URL}/user/${user._id}`, {
           method: 'DELETE'
         });
         users.splice(index, 1);
@@ -132,7 +132,7 @@
       if (index === "") {
         // Novo usuário
         try {
-          const res = await fetch(`${API_URL}/post-user`, {
+          const res = await fetch(`${API_URL}/user`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, score })
@@ -146,7 +146,7 @@
         // Atualizar usuário existente
         try {
           const user = users[index];
-          const res = await fetch(`${API_URL}/update-user`, {
+          const res = await fetch(`${API_URL}/user`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, score })
