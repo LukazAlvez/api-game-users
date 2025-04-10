@@ -1,5 +1,5 @@
 import express from 'express';
-//import mongoose from 'mongoose';
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import User from './models/user.js';
 
@@ -15,14 +15,16 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-// app.get('/users', async (req, res) => {
-//     try{
-//             const users = await User.find();
-//             return res.json(users);
-//         } catch (err) {
-//             return res.status(500).json({ message: err.message });
-//         }
-// });
+app.get('/users', async (req, res) => {
+    try{
+        mongoose.connect(process.env.MONGO_URI)
+        const users = await User.find();
+        return res.json(users);
+
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
