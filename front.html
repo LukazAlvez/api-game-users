@@ -4,110 +4,41 @@
   <meta charset="UTF-8">
   <title>Administração de Usuários</title>
   <style>
-    :root {
-      --primary-color: #ce0058;
-      --background-color: #ffffff;
-      --text-color: #333;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: var(--background-color);
-      color: var(--text-color);
+      margin: 30px;
+      background-color: #f5f5f5;
     }
-
     h1 {
       text-align: center;
-      color: var(--primary-color);
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
-      background-color: #fff;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      background-color: white;
     }
-
     th, td {
-      border: 1px solid #ddd;
-      padding: 12px;
+      border: 1px solid #ccc;
+      padding: 10px;
       text-align: left;
     }
-
     th {
-      background-color: var(--primary-color);
-      color: #fff;
+      background-color: #eee;
     }
-
     button {
       padding: 6px 12px;
       margin: 2px;
       cursor: pointer;
-      border: none;
-      border-radius: 4px;
-      color: #fff;
-      background-color: var(--primary-color);
-      transition: background-color 0.3s ease;
     }
-
-    button:hover {
-      background-color: #a80045;
-    }
-
     form {
-      margin-top: 30px;
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    form h2 {
-      margin-top: 0;
-      color: var(--primary-color);
-    }
-
-    label {
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    input {
-      padding: 8px;
-      width: 100%;
-      max-width: 400px;
-      margin-top: 4px;
+      margin-top: 20px;
+      background-color: white;
+      padding: 15px;
       border: 1px solid #ccc;
-      border-radius: 4px;
     }
-
-    @media (max-width: 600px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-        width: 100%;
-      }
-
-      th, td {
-        padding: 10px;
-        border: none;
-        border-bottom: 1px solid #ddd;
-      }
-
-      tr {
-        margin-bottom: 15px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-      }
-
-      td:last-child {
-        text-align: right;
-      }
+    label {
+      margin-right: 10px;
     }
   </style>
 </head>
@@ -140,17 +71,17 @@
 
   <script>
     let users = [];
+    const API_URL = "https://api-game-users.vercel.app"; // Adicione aqui a URL da sua API
 
-    // Carregar usuários (simulação inicial)
     async function loadUsers() {
-    try {
-        const res = await fetch('https://api-game-users.vercel.app/users');
+      try {
+        const res = await fetch(`${API_URL}/users`);
         users = await res.json();
         renderTable();
-    } catch (error) {
-        console.error('Erro ao carregar usuários:', error);
+      } catch (err) {
+        console.error("Erro ao carregar usuários:", err);
+      }
     }
-} 
 
     function renderTable() {
       const tbody = document.querySelector("#userTable tbody");
@@ -178,13 +109,20 @@
       document.getElementById("editIndex").value = index;
     }
 
-    function deleteUser(index) {
-      // TODO: Chamar API para deletar usuário
-      users.splice(index, 1);
-      renderTable();
+    async function deleteUser(index) {
+      const user = users[index];
+      try {
+        await fetch(`${API_URL}/delete-user/${user._id}`, {
+          method: 'DELETE'
+        });
+        users.splice(index, 1);
+        renderTable();
+      } catch (err) {
+        console.error("Erro ao deletar usuário:", err);
+      }
     }
 
-    document.getElementById("userForm").addEventListener("submit", function(e) {
+    document.getElementById("userForm").addEventListener("submit", async function(e) {
       e.preventDefault();
       const name = document.getElementById("name").value;
       const email = document.getElementById("email").value;
@@ -193,23 +131,39 @@
 
       if (index === "") {
         // Novo usuário
-        // TODO: Chamar API para criar novo usuário
-        users.push({ name, email, score });
+        try {
+          const res = await fetch(`${API_URL}/post-user`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, score })
+          });
+          const newUser = await res.json();
+          users.push(newUser);
+        } catch (err) {
+          console.error("Erro ao adicionar usuário:", err);
+        }
       } else {
         // Atualizar usuário existente
-        // TODO: Chamar API para atualizar usuário
-        users[index] = { name, email, score };
-        document.getElementById("editIndex").value = "";
+        try {
+          const user = users[index];
+          const res = await fetch(`${API_URL}/update-user`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, score })
+          });
+          const updatedUser = await res.json();
+          users[index] = updatedUser;
+          document.getElementById("editIndex").value = "";
+        } catch (err) {
+          console.error("Erro ao atualizar usuário:", err);
+        }
       }
 
-      // Limpar formulário e atualizar tabela
       document.getElementById("userForm").reset();
       renderTable();
     });
 
-    // Inicializa a página
     loadUsers();
   </script>
-
 </body>
 </html>

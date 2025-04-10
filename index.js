@@ -24,18 +24,18 @@ app.get('/users', async (req, res) => {
     res.json(users);
 });
 
-app.post('/post-user', async (req, res) => {
+app.post('/user', async (req, res) => {
     const user = new User(req.body);
     await user.save();
     res.json(user);
 });
-
-app.put('/update-user', async (req, res) => {
+app.put('/user:id', async (req, res) => {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(user);
 });
 
-app.delete('/delete-user', async (req, res) => {
+
+app.delete('/user:id', async (req, res) => {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: 'User deleted' });
 });
