@@ -16,14 +16,21 @@ app.get('/', (req, res) => {
 });
 
 app.get('/users', async (req, res) => {
-    try{
-        mongoose.connect(process.env.MONGO_URI)
-        const users = await User.find();
-        return res.json(users);
+    
+    await mongoose.connect(process.env.MONGO_URI).then(() => {
+        console.log('Connected to MongoDB');
+        try {
+            User.find({}).then((users) => {
+                res.json(users);
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    }).catch((err) => {
+        console.log(err);
+    });
+    
 
-    } catch (err) {
-        return res.status(500).json({ message: err.message });
-    }
 });
 
 app.listen(PORT, () => {
