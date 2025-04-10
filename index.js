@@ -21,20 +21,26 @@ app.get('/users', async (req, res) => {
     res.json(users);
 });
 
+app.post('/post-user', async (req, res) => {
+    const user = new User(req.body);
+    await user.save();
+    res.json(user);
+});
+
+app.put('/update-user', async (req, res) => {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(user);
+});
+
+app.delete('/delete-user', async (req, res) => {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: 'User deleted' });
+});
+
+
 
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
-
-//mongoose connection
-// mongoose.connect(process.env.MONGO_URI)
-// .then(() => {
-//     console.log('Connected to MongoDB');
-//     app.listen(PORT, () => {
-//         console.log(`Server running on port ${PORT}`);
-//     });
-// }).catch((err) => {
-//     console.log(err);
-// });
 
