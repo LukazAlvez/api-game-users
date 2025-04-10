@@ -26,14 +26,14 @@ app.get('/users', async (req, res) => {
 
 //cria um novo usuário
 app.post('/users', async (req, res) => {
-    try {
-      const { name, email, score } = req.body;
-      const newUser = await User.create({ name, email, score });
-      res.status(201).json(newUser);
-    } catch (error) {
-      res.status(500).json({ error: 'Erro ao criar usuário' });
-    }
-  });
+  try {
+    const newUser = new User(req.body);
+    await newUser.save();
+    res.status(201).json(newUser);
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao criar usuário', details: err });
+  }
+});
 
   //atualiza um usuário
   app.put('/users/:id', async (req, res) => {
